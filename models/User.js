@@ -1,24 +1,10 @@
-const Model = require("objection").Model;
-
-class User extends Model {
-  static get tableName() {
-    return "user";
-  }
-
-  static get relationMappings() {
-    const Cat = require("./Cat");
-
-    return {
-      cat: {
-        relation: Model.HasManyRelation,
-        modelClass: Cat,
-        join: {
-          from: "user.id",
-          to: "cat.ownerId"
-        }
-      }
-    };
-  }
-}
-
-module.exports = User;
+module.exports = (sequelize, type) => {
+  return sequelize.define("user", {
+    id: {
+      type: type.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    name: type.STRING
+  });
+};

@@ -1,40 +1,41 @@
-const { transaction } = require("objection");
 const userRoutes = require("express").Router();
-const User = require("../models/User");
+const { Cat, User } = require("../sequelize");
 
 module.exports = (() => {
   userRoutes.get("/", async (req, res) => {
-    const users = await User.query();
+    const users = await User.findAll({
+      include: [{ model: Cat, as: "Cats" }]
+    });
 
     res.send(users);
   });
 
   userRoutes.post("/", async (req, res) => {
-    const user = req.body;
-
-    const insertedUser = await transaction(User.knex(), trx => {
-      return User.query(trx).insert(user);
-    });
+    const insertedUser = await User.create(req.body);
 
     res.send(insertedUser);
   });
 
   userRoutes.get("/:id", async (req, res) => {
-    const user = await User.query().findOne({ id: req.params.id });
+    const user = await User.findById(req.params.id, {
+      include: [{ model: Cat, as: "Cats", attributes: { exclude: ["userId"] } }]
+    });
 
-    res.send(user);
+    user ? res.send(user) : res.send("User not found.");
   });
 
   userRoutes.delete("/:id", async (req, res) => {
-    const deletedUser = await User.query().deleteById(req.params.id);
+    const status = await User.destroy({ where: { id: req.params.id } });
 
-    res.send("User deleted");
+    status === 1 ? res.send("User deleted") : res.send("User not found.");
   });
 
   userRoutes.patch("/:id", async (req, res) => {
-    const updatedUser = await User.query().patchAndFetchById(req.params.id, {
-      ...req.body
-    });
+    const user = await User.findById(req.params.id);
+
+    if (!user) res.send("User not found");
+
+    const updatedUser = await user.update(req.body);
 
     res.send(updatedUser);
   });

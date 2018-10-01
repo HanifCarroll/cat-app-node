@@ -1,17 +1,14 @@
 const express = require("express");
 const app = express();
 const port = 5000;
-const { Model } = require("objection");
-const Knex = require("knex");
+
+// Set up DB and ORM
+require("./sequelize");
 
 app.use(express.urlencoded({ extended: true }));
-
-// Knex and Objection config
-const knexConfig = require("./knexfile");
-const knex = Knex(knexConfig);
-Model.knex(knex);
 
 // Include routes
 app.use(require("./routes"));
 
+// Start the app
 app.listen(port, () => console.log("App started!"));
