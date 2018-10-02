@@ -10,12 +10,6 @@ module.exports = (() => {
     res.send(users);
   });
 
-  userRoutes.post("/", async (req, res) => {
-    const insertedUser = await User.create(req.body);
-
-    res.send(insertedUser);
-  });
-
   userRoutes.get("/:id", async (req, res) => {
     const user = await User.findById(req.params.id, {
       include: [{ model: Cat, as: "Cats", attributes: { exclude: ["userId"] } }]
