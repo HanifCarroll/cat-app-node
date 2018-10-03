@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const port = 5000;
 
+// Set up auth
+require("./auth/index");
+
 // Set up DB and ORM
 require("./sequelize");
 

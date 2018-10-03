@@ -3,7 +3,7 @@ const router = express.Router();
 
 const catRoutes = require("./catRoutes");
 const userRoutes = require("./userRoutes");
-const authRoutes = require("./authRoutes");
+const authRoutes = require("../auth/authRoutes");
 
 router.get("/", (req, res) => res.send({ hey: "hi" }));
 router.use("/auth", authRoutes);
