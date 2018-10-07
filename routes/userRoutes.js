@@ -1,19 +1,15 @@
 const userRoutes = require("express").Router();
-const { Cat, User } = require("../sequelize");
+const { Cat, User, Rating } = require("../sequelize");
 
 module.exports = (() => {
   userRoutes.get("/", async (req, res) => {
-    const users = await User.findAll({
-      include: [{ model: Cat, as: "Cats" }]
-    });
+    const users = await User.scope("withCatsAndRatings").findAll();
 
     res.send(users);
   });
 
   userRoutes.get("/:id", async (req, res) => {
-    const user = await User.findById(req.params.id, {
-      include: [{ model: Cat, as: "Cats", attributes: { exclude: ["userId"] } }]
-    });
+    const user = await User.scope("withCatsAndRatings").findById(req.params.id);
 
     user ? res.send(user) : res.send("User not found.");
   });
