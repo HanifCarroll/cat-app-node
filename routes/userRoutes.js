@@ -1,5 +1,7 @@
 const userRoutes = require("express").Router();
-const { Cat, User, Rating } = require("../sequelize");
+const passport = require("passport");
+
+const { User } = require("../sequelize");
 
 module.exports = (() => {
   userRoutes.get("/", async (req, res) => {
@@ -14,21 +16,29 @@ module.exports = (() => {
     user ? res.send(user) : res.send("User not found.");
   });
 
-  userRoutes.delete("/:id", async (req, res) => {
-    const status = await User.destroy({ where: { id: req.params.id } });
+  userRoutes.delete(
+    "/:id",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+      const status = await User.destroy({ where: { id: req.params.id } });
 
-    status === 1 ? res.send("User deleted") : res.send("User not found.");
-  });
+      status === 1 ? res.send("User deleted") : res.send("User not found.");
+    }
+  );
 
-  userRoutes.patch("/:id", async (req, res) => {
-    const user = await User.findById(req.params.id);
+  userRoutes.patch(
+    "/:id",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+      const user = await User.findById(req.params.id);
 
-    if (!user) res.send("User not found");
+      if (!user) res.send("User not found");
 
-    const updatedUser = await user.update(req.body);
+      const updatedUser = await user.update(req.body);
 
-    res.send(updatedUser);
-  });
+      res.send(updatedUser);
+    }
+  );
 
   return userRoutes;
 })();
