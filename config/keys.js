@@ -1,3 +1,3 @@
 module.exports = {
-  jwtSecret: "A91rjlfa"
+  jwtSecret: "DOCl2495lxA"
 };
